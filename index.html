@@ -1,112 +1,85 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Marriage – Nepali Taas</title>
 <style>
-:root{--gold:#f6c64b}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--gold:#f6c64b}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font-family:system-ui,"Segoe UI",sans-serif;color:#fff;min-height:100vh;background:#05261b;overflow-x:hidden}
-#app{max-width:1000px;margin:auto;padding:8px}
-h1{text-align:center;color:var(--gold);letter-spacing:2px;margin:10px 0;font-size:30px;text-shadow:0 2px 8px #000a}
+#app{max-width:1000px;margin:auto;padding:8px}h1{text-align:center;color:var(--gold);letter-spacing:2px;margin:10px 0;font-size:30px}
 .felt{background:radial-gradient(ellipse at 50% 35%,#1a9570,#0b4d38 72%);border:6px solid #3a2312;border-radius:26px;padding:12px;box-shadow:inset 0 0 50px #0009,0 12px 30px #000a}
-.box{background:#0006;border:1px solid #fff2;border-radius:16px;padding:16px;margin:12px auto;max-width:420px;text-align:center}
+.box{background:#0006;border:1px solid #fff2;border-radius:16px;padding:16px;margin:12px auto;max-width:480px;text-align:center}
 input{width:100%;padding:12px;margin:6px 0;border-radius:12px;border:0;font-size:16px;text-align:center}
-button{font:inherit;font-weight:700;padding:10px 16px;border-radius:12px;border:0;background:linear-gradient(#ffd96b,#e9a91d);color:#2a1b00;cursor:pointer;margin:3px;box-shadow:0 3px 0 #8a5d00;transition:transform .1s}
-button:active{transform:translateY(2px);box-shadow:0 1px 0 #8a5d00}
-button.alt{background:#ffffff26;color:#fff;box-shadow:0 3px 0 #0006}
-button:disabled{opacity:.35;pointer-events:none}
-.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center}
-.seats{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:8px}
-.seat{display:flex;gap:8px;align-items:center;background:#0006;border:2px solid transparent;border-radius:40px;padding:5px 14px 5px 5px;font-size:13px}
-.seat small{opacity:.8}.seat.turn{border-color:var(--gold);box-shadow:0 0 14px var(--gold);animation:glow 1.2s infinite alternate}
-.seat.me{background:#0a3a2b}
+button{font:inherit;font-weight:700;padding:10px 16px;border-radius:12px;border:0;background:linear-gradient(#ffd96b,#e9a91d);color:#2a1b00;cursor:pointer;margin:3px;box-shadow:0 3px 0 #8a5d00}
+button:disabled{opacity:.35;pointer-events:none}button.alt{background:#ffffff26;color:#fff;box-shadow:0 3px 0 #0006}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center}.seats{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:8px}
+.seat{display:flex;gap:8px;align-items:center;background:#0006;border:2px solid transparent;border-radius:40px;padding:5px 14px 5px 5px;font-size:13px}.seat small{opacity:.8}.seat.turn{border-color:var(--gold);box-shadow:0 0 14px var(--gold)}.seat.me{background:#0a3a2b}
 .av{width:38px;height:38px;border-radius:50%;background:linear-gradient(#ffd96b,#c9861a);color:#2a1b00;font-weight:800;display:grid;place-items:center;font-size:18px}
-@keyframes glow{to{box-shadow:0 0 4px var(--gold)}}
-.mid{display:flex;justify-content:center;align-items:flex-end;gap:26px;margin:14px 0;flex-wrap:wrap}
-.mid>div{text-align:center;font-size:12px;opacity:.95}
-.card{position:relative;width:58px;height:84px;background:#fff;color:#111;border-radius:9px;display:inline-grid;place-items:center;font-weight:800;cursor:pointer;user-select:none;box-shadow:0 3px 6px #0007;transition:transform .15s,box-shadow .15s;vertical-align:bottom}
-.card b{position:absolute;top:4px;left:6px;font-size:15px}.card i{font-style:normal;font-size:32px}
-.card.r{color:#c3182c}.card.w{background:#fff8dc}
-.card.w::after{content:'★';position:absolute;right:4px;bottom:2px;font-size:12px;color:#d9a300}
-.card.t{box-shadow:0 0 0 3px var(--gold),0 3px 8px #000a}
-.card.sel{transform:translateY(-16px);box-shadow:0 0 0 3px #3df,0 8px 12px #0008}
-.card.back{background:repeating-linear-gradient(45deg,#7b1e3a,#7b1e3a 6px,#a02c50 6px,#a02c50 12px);border:3px solid #fff}
-.card.back i{color:#fff9;font-size:26px}
-.card.pulse{animation:pulse 1s infinite alternate}
-@keyframes pulse{to{transform:translateY(-6px);box-shadow:0 0 16px var(--gold)}}
-.card.pop{animation:pop .35s ease-out}
-@keyframes pop{from{transform:translateY(-120px) scale(.6);opacity:0}}
-.stack .card{margin-left:-54px}.stack .card:first-child{margin-left:0}
-.groups{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 0}
-.grp{display:flex;padding:6px 6px 6px 24px;background:#0005;border:2px dashed #fff5;border-radius:12px;cursor:pointer}
+.mid{display:flex;justify-content:center;align-items:flex-end;gap:26px;margin:14px 0;flex-wrap:wrap}.mid>div{text-align:center;font-size:12px}
+.card{position:relative;width:58px;height:84px;background:#fff;color:#111;border-radius:9px;display:inline-grid;place-items:center;font-weight:800;cursor:pointer;user-select:none;touch-action:pan-y;box-shadow:0 3px 6px #0007;transition:transform .13s,box-shadow .13s;vertical-align:bottom}
+.card b{position:absolute;top:4px;left:6px;font-size:15px}.card i{font-style:normal;font-size:32px}.card.r{color:#c3182c}.card.w{background:#fff8dc}.card.w:after{content:'★';position:absolute;right:4px;bottom:2px;font-size:12px;color:#d9a300}
+.card.t{box-shadow:0 0 0 3px var(--gold),0 3px 8px #000a}.card.sel{transform:translateY(-13px);box-shadow:0 0 0 3px #3df,0 8px 12px #0008}
+.card.back{background:repeating-linear-gradient(45deg,#7b1e3a,#7b1e3a 6px,#a02c50 6px,#a02c50 12px);border:3px solid #fff}.card.back i{color:#fff9;font-size:26px}
+.hand{display:flex;overflow-x:auto;overflow-y:hidden;padding:22px 14px 12px;min-height:120px;justify-content:flex-start;scrollbar-width:thin;gap:0}
+.hand .card{margin-left:-12px;flex:none}.hand .card:first-child{margin-left:0}.hand .card.dragging{opacity:.35;transform:scale(.96)}
+.groups{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 0}.grp{display:flex;padding:6px 6px 6px 24px;background:#0005;border:2px dashed #fff5;border-radius:12px;cursor:pointer}
 .grp .card{margin-left:-24px;width:46px;height:68px}.grp .card i{font-size:24px}.grp .card b{font-size:12px}
-.hand{display:flex;overflow-x:auto;padding:22px 20px 10px;min-height:120px;justify-content:safe center}
-.hand .card{margin-left:-14px;flex:none}.hand .card:first-child{margin-left:0}
-#msg{text-align:center;font-weight:700;min-height:22px;color:var(--gold)}
-#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,100px);background:#000d;padding:10px 18px;border-radius:30px;transition:.25s;z-index:9;max-width:90vw}
-#toast.show{transform:translate(-50%,0)}
-.code{font-size:44px;letter-spacing:8px;color:var(--gold);font-weight:800}
-.ov{position:fixed;inset:0;background:#000b;display:grid;place-items:center;z-index:5;padding:10px}
-.panel{background:#0b3d2e;border:3px solid var(--gold);border-radius:18px;padding:16px;max-width:560px;width:100%;max-height:92vh;overflow:auto;text-align:center}
-table{width:100%;border-collapse:collapse;margin:10px 0}td,th{padding:6px;border-bottom:1px solid #fff2;font-size:14px}
-.pos{color:#7dff9a}.neg{color:#ff8a8a}
+#msg{text-align:center;font-weight:700;min-height:22px;color:var(--gold)}#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,100px);background:#000d;padding:10px 18px;border-radius:30px;transition:.25s;z-index:9;max-width:90vw}#toast.show{transform:translate(-50%,0)}
+.code{font-size:42px;letter-spacing:8px;color:var(--gold);font-weight:800}.chat{max-width:680px;margin:12px auto;background:#0005;padding:10px;border-radius:12px}.chatlog{max-height:120px;overflow:auto;text-align:left;font-size:13px}.chatline{padding:3px 0;border-bottom:1px solid #fff1}.chatform{display:flex;gap:5px}.chatform input{text-align:left;margin:0}.ov{position:fixed;inset:0;background:#000b;display:grid;place-items:center;z-index:5;padding:10px}.panel{background:#0b3d2e;border:3px solid var(--gold);border-radius:18px;padding:16px;max-width:560px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+table{width:100%;border-collapse:collapse;margin:10px 0}td,th{padding:6px;border-bottom:1px solid #fff2;font-size:14px}.pos{color:#7dff9a}.neg{color:#ff8a8a}.muted{opacity:.75;font-size:12px}
+@media(max-width:600px){.card{width:51px;height:76px}.hand{padding-left:8px}.code{font-size:34px}.felt{padding:8px;border-width:4px}}
 </style></head><body><div id="app"></div><div id="toast"></div>
 <script>
-const $=s=>document.querySelector(s),app=$('#app');
-const SYM={S:'♠',H:'♥',D:'♦',C:'♣'},RK=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-let T=localStorage.t||'',C=localStorage.c||'',S=null,mine=[],groups=[],sel=new Set(),fresh=[];
+const $=s=>document.querySelector(s),app=$('#app'),SYM={S:'♠',H:'♥',D:'♦',C:'♣'},RK=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+let T=localStorage.t||'',C=localStorage.c||'',S=null,mine=[],groups=[],sel=new Set(),chatDraft='';
+const val=id=>String(id||'').replace(/#\d+$/,'');
+const rk=c=>RK.indexOf(val(c).slice(0,-1)),su=c=>val(c).slice(-1),red=s=>s==='H'||s==='D';
 function toast(m){const t=$('#toast');t.textContent=m;t.className='show';clearTimeout(toast.h);toast.h=setTimeout(()=>t.className='',2800)}
-async function api(a,b={},q){try{const r=await fetch('api.php?a='+a,{method:'POST',body:JSON.stringify({token:T,code:C,...b})});const j=await r.json();if(j.error&&!q)toast(j.error);return j}catch(e){return{error:'Network'}}}
-const rk=c=>RK.indexOf(c.slice(0,-1)),su=c=>c.slice(-1),red=s=>s==='H'||s==='D';
-function cls(c){if(c==='JK')return'J';const t=S&&(S.tiplu||(S.result&&S.result.tiplu));if(!t)return'';const r=rk(c),s=su(c),tr=rk(t),ts=su(t);
- if(c===t)return'T';if(s===ts){if(r===(tr+1)%13)return'P';if(r===(tr+12)%13)return'H';return''}
- if(r===tr)return red(s)===red(ts)?'A':'O';return''}
-function cardEl(c,x='',oc=''){const k=cls(c),jk=c==='JK';return `<div class="card ${!jk&&red(su(c))?'r':''} ${k?'w':''} ${k==='T'?'t':''} ${x}" ${oc}><b>${jk?'':c.slice(0,-1)}</b><i>${jk?'🃏':SYM[su(c)]}</i></div>`}
+async function api(a,b={},quiet=false){try{const r=await fetch('api.php?a='+a,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:T,code:C,...b})});const j=await r.json();if(j.error&&!quiet)toast(j.error);return j}catch(e){return{error:'Network error'}}}
+function cls(c){if(val(c)==='JK')return'J';const t=S&&(S.tiplu||(S.result&&S.result.tiplu));if(!t)return'';const r=rk(c),s=su(c),tr=rk(t),ts=su(t);if(val(c)===val(t))return'T';if(s===ts){if(r===(tr+1)%13)return'P';if(r===(tr+12)%13)return'H';return''}if(r===tr)return red(s)===red(ts)?'A':'O';return''}
+function cardEl(id,extra='',attrs=''){const c=val(id),k=cls(id),jk=c==='JK';return `<div class="card ${!jk&&red(su(id))?'r':''} ${k?'w':''} ${k==='T'?'t':''} ${extra}" data-id="${id}" ${attrs}><b>${jk?'':c.slice(0,-1)}</b><i>${jk?'🃏':SYM[su(id)]}</i></div>`}
 const back=(x='',oc='')=>`<div class="card back ${x}" ${oc}><i>♦</i></div>`;
-function free(){const p=[...mine];groups.flat().forEach(c=>{const i=p.indexOf(c);if(i>=0)p.splice(i,1)});return p}
-function sync(h){const pool=[...h],keep=[];for(const c of mine){const i=pool.indexOf(c);if(i>=0){keep.push(c);pool.splice(i,1)}}
- fresh=mine.length?pool:[];mine=keep.concat(pool);const p2=[...h];
- groups=groups.map(g=>g.filter(c=>{const i=p2.indexOf(c);if(i>=0){p2.splice(i,1);return 1}return 0})).filter(g=>g.length)}
+function free(){const used=new Set(groups.flat());return mine.filter(c=>!used.has(c))}
+function sync(h){const pool=[...h],keep=[];for(const c of mine){const i=pool.indexOf(c);if(i>=0){keep.push(c);pool.splice(i,1)}}mine=keep.concat(pool);groups=groups.map(g=>g.filter(c=>h.includes(c))).filter(g=>g.length);sel.clear()}
 function sortHand(){mine.sort((a,b)=>a==='JK'?1:b==='JK'?-1:(su(a)>su(b)?1:su(a)<su(b)?-1:rk(a)-rk(b)));render()}
 function render(){
- if(!C||!S){app.innerHTML=`<h1>♥ MARRIAGE ♠</h1><div class="box"><div>Play Nepali Marriage with family anywhere</div>
- <input id="nm" placeholder="Your name" maxlength="14" value="${localStorage.n||''}"><button onclick="mk()">Create room</button>
- <hr style="opacity:.2"><input id="cd" placeholder="ROOM CODE" maxlength="4" style="text-transform:uppercase"><button class="alt" onclick="jn()">Join room</button></div>`;return}
- if(S.status==='lobby'){app.innerHTML=`<h1>♥ MARRIAGE ♠</h1><div class="box">Share this code with friends & relatives<div class="code">${S.code}</div>
- <div class="seats">${S.players.map(p=>`<div class="seat"><div class="av">${p.name[0]}</div>${p.name}</div>`).join('')}</div>
- ${S.me===0?`<button onclick="act('start')">Start game</button>`:'<p>Waiting for host to start…</p>'}</div>`;return}
+ if(!C||!S){const params=new URLSearchParams(location.search);const invite=params.get('room')||'';app.innerHTML=`<h1>♥ MARRIAGE ♠</h1><div class="box"><div>Play Nepali Marriage with your friends</div><input id="nm" placeholder="Your name" maxlength="14" value="${esc(localStorage.n||'')}"><button onclick="mk()">Create private room</button><hr style="opacity:.2"><input id="cd" placeholder="ROOM CODE" maxlength="5" style="text-transform:uppercase" value="${esc(invite)}"><button class="alt" onclick="jn()">Join room</button></div>`;return}
+ if(S.status==='lobby'){app.innerHTML=`<h1>♥ MARRIAGE ♠</h1><div class="box">Share this room code or invitation link<div class="code">${S.code}</div><button class="alt" onclick="copyInvite()">Copy invite link</button><div class="seats">${S.players.map((p,i)=>`<div class="seat"><div class="av">${esc(p.name[0]||'?')}</div><div>${esc(p.name)}<br><small>${i===0?'Host':(p.ready?'Ready':'Not ready')} · ${p.online?'Online':'Offline'}</small></div></div>`).join('')}</div><p>${S.players.length}/5 players</p>${S.me===0?'<button onclick="act(\'start\')">Start game</button>':'<button onclick="setReady()">'+(S.players[S.me].ready?'Cancel ready':'I’m ready')+'</button>'}<p class="muted">At least 2 players. Everyone must be ready before the host starts.</p><button class="alt" onclick="leaveRoom()">Leave room</button></div>`;return}
  const me=S.me,pl=S.status==='playing',mt=pl&&S.turn===me,dr=mt&&S.phase==='draw',ds=mt&&S.phase==='discard',fr=free(),seen=S.players[me].seen;
  const msg=!pl?'':mt?(dr?'Your turn — draw from the deck or take the top discard':'Select 1 card to discard (or Declare)'):`Waiting for ${S.players[S.turn].name}…`;
- app.innerHTML=`<div class="felt">
- <div class="seats">${S.players.map((p,i)=>`<div class="seat ${i===S.turn&&pl?'turn':''} ${i===me?'me':''}"><div class="av">${p.name[0]}</div><div>${p.name}${p.seen?' 👁':''}<br><small>${p.count} cards · ${p.score} pts</small></div></div>`).join('')}</div>
- <div class="mid"><div>Deck ${S.deck}<br>${back(dr?'pulse':'',dr?'onclick="act(\'draw\')"':'')}</div>
- <div>Discard<br>${S.top?cardEl(S.top,dr?'pulse':'',dr?'onclick="act(\'take\')"':''):''}</div>
- <div>Round ${S.round}<br>Tiplu<br>${S.tiplu?cardEl(S.tiplu,'t'):back('','')}</div></div>
- <div id="msg">${msg}</div>
- <div class="groups">${groups.map((g,gi)=>`<div class="grp" onclick="groups.splice(${gi},1);render()">${g.map(c=>cardEl(c)).join('')}</div>`).join('')}</div>
- <div class="hand">${fr.map((c,i)=>cardEl(c,(sel.has(i)?'sel ':'')+(fresh.includes(c)?'pop':''),`onclick="tg(${i})"`)).join('')}</div>
- <div class="row"><button class="alt" onclick="sortHand()">Sort</button><button class="alt" onclick="grp()">Group selected</button>
- ${seen?'':`<button ${pl&&mt&&ds?'':'disabled'} onclick="showM()">👁 See maal</button>`}
- <button ${ds?'':'disabled'} onclick="dis()">Discard</button><button ${ds&&seen?'':'disabled'} onclick="dec()">Declare ✔</button></div>
- <div style="text-align:center;font-size:12px;opacity:.8;margin-top:6px">Tap cards → Group. Tap a group to break it. Need 3 pure sequences to see the maal; ★ = joker/maal.</div></div>`;
- fresh=[];
- if(S.status==='finished'){const R=S.result;app.insertAdjacentHTML('beforeend',`<div class="ov"><div class="panel"><h2 style="color:var(--gold)">🎉 ${R.rows[R.winner].name} wins round ${S.round}!</h2>
- <div>Tiplu</div>${cardEl(R.tiplu,'t')}<div class="groups">${R.groups.map(g=>`<div class="grp">${g.map(c=>cardEl(c)).join('')}</div>`).join('')}</div>
- <table><tr><th>Player</th><th>Maal</th><th>Round</th><th>Total</th></tr>${R.rows.map((r,i)=>`<tr><td>${r.name}${r.seen?'':' (unseen)'}</td><td>${r.maal}</td><td class="${r.delta>=0?'pos':'neg'}">${r.delta>0?'+':''}${r.delta}</td><td><b>${S.players[i].score}</b></td></tr>`).join('')}</table>
- ${me===0?'<button onclick="act(\'next\')">Next round</button>':'<p>Waiting for host to start next round…</p>'}</div></div>`)}
+ app.innerHTML=`<div class="felt"><div class="seats">${S.players.map((p,i)=>`<div class="seat ${i===S.turn&&pl?'turn':''} ${i===me?'me':''}"><div class="av">${esc(p.name[0]||'?')}</div><div>${esc(p.name)}${p.seen?' 👁':''}<br><small>${p.count} cards · ${p.score} pts · ${p.online?'Online':'Offline'}</small></div></div>`).join('')}</div>
+ <div class="mid"><div>Deck ${S.deck}<br>${back(dr?'pulse':'',dr?"onclick=\"act('draw')\"":'')}</div><div>Discard<br>${S.top?cardEl(S.top,dr?'pulse':'',dr?"onclick=\"act('take')\"":''):''}</div><div>Round ${S.round}<br>Tiplu<br>${S.tiplu?cardEl(S.tiplu,'t'):back()}</div></div>
+ <div id="msg">${msg}</div><div class="groups">${groups.map((g,gi)=>`<div class="grp" onclick="breakGroup(${gi})">${g.map(c=>cardEl(c)).join('')}</div>`).join('')}</div>
+ <div class="hand" id="hand">${fr.map((c,i)=>cardEl(c,(sel.has(c)?'sel':''),`data-hand-index="${i}" draggable="true" onclick="tg('${c}')"`)).join('')}</div>
+ <div class="row"><button class="alt" onclick="sortHand()">Sort</button><button class="alt" onclick="grp()">Group selected</button>${seen?'':`<button ${pl&&mt&&ds?'':'disabled'} onclick="showM()">👁 See maal</button>`}<button ${ds?'':'disabled'} onclick="dis()">Discard</button><button ${ds&&seen?'':'disabled'} onclick="dec()">Declare ✔</button></div>
+ <div class="muted" style="text-align:center;margin-top:6px">Tap cards to select · Drag cards to reorder · Tap a group to break it</div></div>
+ <div class="chat"><b>Room chat</b><div class="chatlog">${(S.chat||[]).map(m=>`<div class="chatline"><b>${esc(m.name)}:</b> ${esc(m.message)}</div>`).join('')}</div><div class="chatform"><input id="chatmsg" maxlength="180" placeholder="Message friends…" onkeydown="if(event.key==='Enter')sendChat()"><button onclick="sendChat()">Send</button></div></div>
+ <div class="row"><button class="alt" onclick="copyInvite()">Copy invite</button><button class="alt" onclick="leaveRoom()">Leave room</button></div>`;
+ setupDrag();
+ if(S.status==='finished'){const R=S.result;app.insertAdjacentHTML('beforeend',`<div class="ov"><div class="panel"><h2 style="color:var(--gold)">🎉 ${esc(R.rows[R.winner].name)} wins round ${S.round}!</h2><div>Tiplu</div>${cardEl(R.tiplu,'t')}<div class="groups">${R.groups.map(g=>`<div class="grp">${g.map(c=>cardEl(c)).join('')}</div>`).join('')}</div><table><tr><th>Player</th><th>Maal</th><th>Round</th><th>Total</th></tr>${R.rows.map((r,i)=>`<tr><td>${esc(r.name)}${r.seen?'':' (unseen)'}</td><td>${r.maal}</td><td class="${r.delta>=0?'pos':'neg'}">${r.delta>0?'+':''}${r.delta}</td><td><b>${S.players[i].score}</b></td></tr>`).join('')}</table>${me===0?"<button onclick=\"act('next')\">Next round</button>":'<p>Waiting for host to start next round…</p>'}</div></div>`)}
 }
-function tg(i){sel.has(i)?sel.delete(i):sel.add(i);render()}
-function pick(){const f=free();return[...sel].map(i=>f[i])}
-function grp(){const c=pick();if(c.length<2)return toast('Select 2+ cards to group');groups.push(c);sel.clear();render()}
-async function act(a,b){await api(a,b);sel.clear();poll()}
-function dis(){const c=pick();if(c.length!==1)return toast('Select exactly 1 card');act('discard',{card:c[0]})}
-function dec(){const c=pick();if(c.length!==1||free().length!==1)return toast('Group all cards except 1, and select that 1 to throw');act('declare',{card:c[0],groups})}
-async function showM(){if(groups.length<3)return toast('Make 3 pure sequences first, then press See maal');await act('show',{groups})}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function tg(id){sel.has(id)?sel.delete(id):sel.add(id);render()}
+function grp(){const c=free().filter(x=>sel.has(x));if(c.length<2)return toast('Select 2+ cards to group');groups.push(c);sel.clear();render()}
+function breakGroup(i){groups.splice(i,1);render()}
+async function act(a,b={}){const j=await api(a,b);if(j.ok||j.code){sel.clear();await poll(true)}}
+function dis(){const c=[...sel];if(c.length!==1)return toast('Select exactly 1 card');act('discard',{card:c[0]})}
+function dec(){const c=[...sel];if(c.length!==1||free().length!==1)return toast('Group all cards except 1, and select that 1 to throw');act('declare',{card:c[0],groups})}
+async function showM(){if(groups.length<3)return toast('Make 3 pure sequences first');await act('show',{groups})}
 async function mk(){localStorage.n=$('#nm').value;const j=await api('create',{name:$('#nm').value});if(j.token)save(j)}
 async function jn(){localStorage.n=$('#nm').value;const j=await api('join',{name:$('#nm').value,code:$('#cd').value});if(j.token)save(j)}
-function save(j){T=localStorage.t=j.token;C=localStorage.c=j.code;S=null;poll()}
-async function poll(){if(!C)return;const s=await api('state',{v:S?S.v:-1},true);
- if(s.same)return;if(s.error){if(/not found|Not in/.test(s.error)){localStorage.removeItem('t');localStorage.removeItem('c');T=C='';S=null;render()}return}
- S=s;sync(s.hand);render()}
-render();poll();setInterval(poll,1000);
+function save(j){T=localStorage.t=j.token;C=localStorage.c=j.code;S=null;history.replaceState({},'',location.pathname+'?room='+C);poll(true)}
+async function setReady(){await api('ready',{ready:!S.players[S.me].ready});poll(true)}
+async function leaveRoom(){if(!confirm('Leave this room?'))return;await api('leave');localStorage.removeItem('t');localStorage.removeItem('c');T=C='';S=null;mine=[];groups=[];history.replaceState({},'',location.pathname);render()}
+function copyInvite(){const u=location.origin+location.pathname+'?room='+C;navigator.clipboard?.writeText(u).then(()=>toast('Invite link copied')).catch(()=>toast(u));}
+async function sendChat(){const el=$('#chatmsg');if(!el||!el.value.trim())return;const message=el.value.trim();el.value='';await api('chat',{message});poll(true)}
+let polling=false;
+async function poll(force=false){if(!C||polling)return;polling=true;const s=await api('state',{v:force?-1:(S?S.v:-1)},true);polling=false;if(s.same)return;if(s.error){if(/not found|Not in/.test(s.error)){localStorage.removeItem('t');localStorage.removeItem('c');T=C='';S=null;render()}return}S=s;sync(s.hand);render()}
+function setupDrag(){const hand=$('#hand');if(!hand)return;let drag=null;hand.querySelectorAll('.card').forEach(el=>{
+ el.addEventListener('dragstart',e=>{drag=el.dataset.id;el.classList.add('dragging');e.dataTransfer.setData('text/plain',drag);e.dataTransfer.effectAllowed='move'});
+ el.addEventListener('dragend',()=>el.classList.remove('dragging'));
+ el.addEventListener('dragover',e=>e.preventDefault());
+ el.addEventListener('drop',e=>{e.preventDefault();const target=el.dataset.id,from=mine.indexOf(drag),to=mine.indexOf(target);if(from<0||to<0||from===to)return;const [m]=mine.splice(from,1);mine.splice(to,0,m);render()});
+ el.addEventListener('touchstart',e=>{el.dataset.touchX=e.touches[0].clientX;el.dataset.touchY=e.touches[0].clientY},{passive:true});
+ el.addEventListener('touchend',e=>{const x=e.changedTouches[0].clientX,y=e.changedTouches[0].clientY,oldX=Number(el.dataset.touchX),oldY=Number(el.dataset.touchY);if(Math.hypot(x-oldX,y-oldY)<24)return;const target=document.elementFromPoint(x,y)?.closest('.card')?.dataset.id;if(!target||target===el.dataset.id)return;const from=mine.indexOf(el.dataset.id),to=mine.indexOf(target);if(from<0||to<0)return;const [m]=mine.splice(from,1);mine.splice(to,0,m);render()},{passive:true});
+})}
+render();poll(true);setInterval(()=>poll(),1200);
 </script></body></html>
