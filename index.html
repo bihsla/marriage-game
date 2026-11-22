@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Marriage – Play with Family</title>
+<style>
+:root{--gold:#f5c542;--felt:#0f5a43}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;color:#fff;min-height:100vh;background:radial-gradient(circle at 50% 30%,#18805f,#0a3a2b)}
+main{max-width:900px;margin:auto;padding:16px}
+h1{color:var(--gold);text-align:center;margin:8px 0}
+.box{background:#0004;border:1px solid #fff2;border-radius:14px;padding:16px;margin:12px 0}
+input,button{font:inherit;padding:10px 14px;border-radius:10px;border:0}
+input{width:100%;margin:6px 0}
+button{background:var(--gold);color:#222;font-weight:600;cursor:pointer;margin:4px}
+button.alt{background:#fff2;color:#fff}
+button:disabled{opacity:.4}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.card{width:52px;height:76px;background:#fff;color:#111;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;cursor:pointer;transition:transform .1s;user-select:none;box-shadow:0 2px 4px #0006}
+.card.r{color:#c0182b}.card.sel{transform:translateY(-12px);outline:3px solid var(--gold)}
+.card.back{background:repeating-linear-gradient(45deg,#7b1e3a,#7b1e3a 6px,#9b2a4c 6px,#9b2a4c 12px);color:transparent}
+.card small{font-size:20px;line-height:1}
+.grp{background:#0005;border-radius:10px;padding:6px;display:flex;gap:4px;cursor:pointer}
+.me{outline:2px solid var(--gold)}
+.pl{padding:6px 12px;border-radius:20px;background:#fff2}
+.pl.turn{background:var(--gold);color:#222}
+.code{font-size:32px;letter-spacing:6px;color:var(--gold)}
+</style></head><body><main>
+<h1>♥ Marriage ♠</h1><div id="app"></div></main>
+<script>
+const $=s=>document.querySelector(s), app=$('#app');
+let T=localStorage.t||'', C=localStorage.c||'', S=null, mine=[], groups=[], sel=new Set();
+const SYM={S:'♠',H:'♥',D:'♦',C:'♣'}, RK='A23456789 JQK'.split('');
+async function api(a,b={},quiet){
+  try{const r=await fetch('api.php?a='+a,{method:'POST',body:JSON.stringify({token:T,code:C,...b})});
+  const j=await r.json(); if(j.error&&!quiet) alert(j.error); return j}catch(e){return {error:'Network'}}
+}
+function cardEl(c,cls='',click=''){
+  if(c==='JK') return `<div class="card ${cls}" ${click}><small>★</small>JKR</div>`;
+  const s=c.slice(-1), r=c.slice(0,-1);
+  return `<div class="card ${/[HD]/.test(s)?'r':''} ${cls}" ${click}>${r}<small>${SYM[s]}</small></div>`;
+}
+function free(){const pool=[...mine];groups.flat().forEach(c=>{const i=pool.indexOf(c);if(i>=0)pool.splice(i,1)});return pool}
+function sync(h){
+  const pool=[...h],keep=[];
+  for(const c of mine){const i=pool.indexOf(c);if(i>=0){keep.push(c);pool.splice(i,1)}}
+  mine=keep.concat(pool);
+  const p2=[...h];
+  groups=groups.map(g=>g.filter(c=>{const i=p2.indexOf(c);if(i>=0){p2.splice(i,1);return 1}return 0})).filter(g=>g.length);
+}
+const rankVal=c=>c==='JK'?99:RK.indexOf(c.slice(0,-1)=='10'?' ':c.slice(0,-1)[0]);
+function sortHand(){mine.sort((a,b)=>(a.slice(-1)>b.slice(-1)?1:-1)||rankVal(a)-rankVal(b))}
+function render(){
+  if(!C||!S){ // landing
+    app.innerHTML=`<div class="box"><input id="nm" placeholder="Your name" maxlength="16">
+    <button onclick="mk()">Create room</button><hr style="opacity:.2">
+    <input id="cd" placeholder="Room code (e.g. K7P2)" maxlength="4" style="text-transform:uppercase">
+    <button class="alt" onclick="jn()">Join room</button></div>`;return}
+  if(S.status==='lobby'){
+    app.innerHTML=`<div class="box" style="text-align:center">Share this code with friends & relatives<div class="code">${S.code}</div>
+    <div class="row" style="justify-content:center">${S.players.map(p=>`<span class="pl">${p.name}</span>`).join('')}</div>
+    ${S.me===0?`<button onclick="api('start',{})">Start game</button>`:'<p>Waiting for host…</p>'}</div>`;return}
+  const mt=S.turn===S.me&&S.status==='playing', fr=free();
+  app.innerHTML=`
+  <div class="row">${S.players.map((p,i)=>`<span class="pl ${i===S.turn&&S.status==='playing'?'turn':''} ${i===S.me?'me':''}">${p.name} · ${p.count}</span>`).join('')}</div>
+  ${S.status==='finished'?`<div class="box">🎉 <b>${S.winner.name}</b> declared and won!<div class="row">${S.winner.groups.map(g=>`<div class="grp">${g.map(c=>cardEl(c)).join('')}</div>`).join('')}</div></div>`:''}
+  <div class="box row" style="justify-content:center;gap:24px">
+    <div style="text-align:center">Deck (${S.deck})<br>${cardEl('X','back',mt&&S.phase==='draw'?'onclick="api(\'draw\',{})"':'')}</div>
+    <div style="text-align:center">Discard<br>${S.top?cardEl(S.top,'',mt&&S.phase==='draw'?'onclick="api(\'take\',{})"':''):''}</div>
+    <div>${S.status==='finished'?'':mt?(S.phase==='draw'?'<b>Your turn: tap deck or discard pile</b>':'<b>Select a card, then Discard or Declare</b>'):'Waiting for '+S.players[S.turn].name+'…'}</div>
+  </div>
+  <div class="box"><div class="row">${groups.map((g,gi)=>`<div class="grp" onclick="groups.splice(${gi},1);draw()">${g.map(c=>cardEl(c)).join('')}</div>`).join('')}</div>
+  <div class="row" style="margin-top:14px">${fr.map((c,i)=>cardEl(c,sel.has(i)?'sel':'',`onclick="tg(${i})"`)).join('')}</div>
+  <div class="row"><button class="alt" onclick="sortHand();draw()">Sort</button>
+  <button class="alt" onclick="grp()">Group selected</button>
+  <button ${mt&&S.phase==='discard'?'':'disabled'} onclick="dis()">Discard</button>
+  <button ${mt&&S.phase==='discard'?'':'disabled'} onclick="dec()">Declare ✔</button></div>
+  <small>Tip: tap a group to break it. Declare = group all cards, keep 1 selected to discard.</small></div>`;
+}
+const draw=()=>render();
+function tg(i){sel.has(i)?sel.delete(i):sel.add(i);render()}
+function pick(){const f=free();return [...sel].map(i=>f[i])}
+function grp(){const c=pick();if(c.length<2)return alert('Select 2+ cards');groups.push(c);sel.clear();render()}
+async function dis(){const c=pick();if(c.length!==1)return alert('Select exactly 1 card');sel.clear();await api('discard',{card:c[0]});poll()}
+async function dec(){const c=pick();if(c.length!==1)return alert('Select exactly 1 card to discard');
+  if(free().length!==1)return alert('Group all other cards first');sel.clear();await api('declare',{card:c[0],groups});poll()}
+async function mk(){const j=await api('create',{name:$('#nm').value});if(j.token)save(j)}
+async function jn(){const j=await api('join',{name:$('#nm').value,code:$('#cd').value});if(j.token)save(j)}
+function save(j){T=localStorage.t=j.token;C=localStorage.c=j.code;poll()}
+async function poll(){
+  if(!C)return render();
+  const s=await api('state',{},true);
+  if(s.error){if(/not found|Not in/.test(s.error)){localStorage.clear();T=C='';S=null}return render()}
+  const old=JSON.stringify(S);S=s;sync(s.hand);
+  if(JSON.stringify(S)!==old)render();
+}
+render();poll();setInterval(poll,1500);
+</script></body></html>
