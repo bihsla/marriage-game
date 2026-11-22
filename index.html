@@ -7,7 +7,7 @@ body{margin:0;font-family:system-ui,"Segoe UI",sans-serif;color:#fff;min-height:
 #app{max-width:1280px;margin:auto;padding:12px}h1{text-align:center;color:var(--gold);letter-spacing:2px;margin:10px 0;font-size:30px}
 .felt{position:relative;isolation:isolate;min-height:650px;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#24d66d 0%,#10a94f 52%,#08763c 78%,#06472f 100%);border:14px solid #8c4b1e;border-radius:48% / 19%;padding:22px 24px 18px;box-shadow:inset 0 0 0 5px #d58a3e,inset 0 0 0 9px #4c2915,inset 0 0 70px #002b1a99,0 14px 28px #000b}
 .felt:before{content:"";position:absolute;inset:16px;border:2px solid #d5f8cf88;border-radius:48% / 20%;pointer-events:none;z-index:-1}.felt:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 22% 45%,transparent 0 32%,#ffffff08 33%,transparent 34%),radial-gradient(ellipse at 78% 45%,transparent 0 32%,#ffffff08 33%,transparent 34%);pointer-events:none;z-index:-1}
-.box{background:#0006;border:1px solid #fff2;border-radius:16px;padding:16px;margin:12px auto;max-width:480px;text-align:center}
+.brand-plaque{position:relative;z-index:1;text-align:center;margin:-2px auto 12px;width:max-content;max-width:90%;padding:7px 26px;border:2px solid #f4c15a;border-radius:999px;background:linear-gradient(180deg,#4a2415ee,#170d0bee);box-shadow:0 4px 0 #321709,0 0 18px #f4c15a44;color:#ffe29a;font-family:Georgia,serif;font-size:clamp(17px,2.4vw,27px);font-weight:900;letter-spacing:2px;text-shadow:0 2px 3px #000}.table-decor{position:absolute;z-index:1;bottom:24%;font-size:clamp(25px,3.5vw,42px);filter:drop-shadow(0 5px 4px #0008);opacity:.92;pointer-events:none}.table-decor.left{left:5%}.table-decor.right{right:5%}.table-tagline{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);font:italic 700 clamp(12px,1.7vw,19px) Georgia,serif;letter-spacing:3px;color:#064b2c55;white-space:nowrap;pointer-events:none;z-index:0}.box{background:#0006;border:1px solid #fff2;border-radius:16px;padding:16px;margin:12px auto;max-width:480px;text-align:center}
 input{width:100%;padding:12px;margin:6px 0;border-radius:12px;border:0;font-size:16px;text-align:center}
 button{font:inherit;font-weight:700;padding:10px 16px;border-radius:12px;border:0;background:linear-gradient(#ffd96b,#e9a91d);color:#2a1b00;cursor:pointer;margin:3px;box-shadow:0 3px 0 #8a5d00}
 button:disabled{opacity:.35;pointer-events:none}button.alt{background:#ffffff26;color:#fff;box-shadow:0 3px 0 #0006}
@@ -47,7 +47,7 @@ function render(){
  if(S.status==='lobby'){app.innerHTML=`<h1>♥ MARRIAGE ♠</h1><div class="box">Share this room code or invitation link<div class="code">${S.code}</div><button class="alt" onclick="copyInvite()">Copy invite link</button><div class="seats">${S.players.map((p,i)=>`<div class="seat"><div class="av">${esc(p.name[0]||'?')}</div><div>${esc(p.name)}<br><small>${i===0?'Host':(p.ready?'Ready':'Not ready')} · ${p.online?'Online':'Offline'}</small></div></div>`).join('')}</div><p>${S.players.length}/5 players</p>${S.me===0?'<button onclick="act(\'start\')">Start game</button>':'<button onclick="setReady()">'+(S.players[S.me].ready?'Cancel ready':'I’m ready')+'</button>'}<p class="muted">At least 2 players. Everyone must be ready before the host starts.</p><button class="alt" onclick="leaveRoom()">Leave room</button></div>`;return}
  const me=S.me,pl=S.status==='playing',mt=pl&&S.turn===me,dr=mt&&S.phase==='draw',ds=mt&&S.phase==='discard',fr=free(),seen=S.players[me].seen;
  const msg=!pl?'':mt?(dr?'Your turn — draw from the deck or take the top discard':'Select 1 card to discard (or Declare)'):`Waiting for ${S.players[S.turn].name}…`;
- app.innerHTML=`<div class="felt"><div class="seats">${S.players.map((p,i)=>`<div class="seat ${i===S.turn&&pl?'turn':''} ${i===me?'me':''}"><div class="av">${esc(p.name[0]||'?')}</div><div>${esc(p.name)}${p.seen?' 👁':''}<br><small>${p.count} cards · ${p.score} pts · ${p.online?'Online':'Offline'}</small></div></div>`).join('')}</div>
+ app.innerHTML=`<div class="felt"><div class="brand-plaque">♠ BISHAL’S MARRIAGE ♥</div><div class="table-tagline">THE FRIENDS’ CARD TABLE</div><div class="table-decor left" aria-hidden="true">☕</div><div class="table-decor right" aria-hidden="true">🥜</div><div class="seats">${S.players.map((p,i)=>`<div class="seat ${i===S.turn&&pl?'turn':''} ${i===me?'me':''}"><div class="av">${esc(p.name[0]||'?')}</div><div>${esc(p.name)}${p.seen?' 👁':''}<br><small>${p.count} cards · ${p.score} pts · ${p.online?'Online':'Offline'}</small></div></div>`).join('')}</div>
  <div class="mid"><div class="pile" data-drop="deck">Deck ${S.deck}<br>${back(dr?'pulse':'',dr?"data-pile=\"deck\" onclick=\"act('draw')\"":'data-pile=\"deck\"')}</div><div class="pile" data-drop="discard">Discard<br>${S.top?cardEl(S.top,dr?'pulse':'',dr?"data-pile=\"discard\" onclick=\"act('take')\"":'data-pile=\"discard\"'):''}</div><div>Round ${S.round}<br>Tiplu<br>${S.tiplu?cardEl(S.tiplu,'t'):back()}</div></div>
  <div id="msg">${pendingCard?'✨ New card revealed! Drag the glowing card to the position you want in your hand.':msg}</div><div class="groups">${groups.map((g,gi)=>`<div class="grp" onclick="breakGroup(${gi})">${g.map(c=>cardEl(c)).join('')}</div>`).join('')}</div>
  <div class="hand" id="hand" data-drop="hand">${fr.map((c,i)=>cardEl(c,[(sel.has(c)?'sel':''),(c===pendingCard?'just-drawn':'')].join(' '),`data-hand-index="${i}" draggable="false" onclick="tg('${c}')"`)).join('')}</div>
@@ -81,29 +81,34 @@ function setupDrag(){
  const point=e=>({x:e.clientX,y:e.clientY});
  function makeGhost(el,x,y){ghost=el.cloneNode(true);ghost.classList.add('drag-ghost');ghost.style.width=getComputedStyle(el).width;ghost.style.height=getComputedStyle(el).height;document.body.appendChild(ghost);moveGhost(x,y)}
  function moveGhost(x,y){if(ghost){ghost.style.left=x+'px';ghost.style.top=y+'px'}}
+ function revealGhost(id){if(!ghost||!id)return;ghost.className='drag-ghost';ghost.innerHTML=cardEl(id);const c=ghost.querySelector('.card');if(c){c.style.width='62px';c.style.height='112px';c.style.margin='0';c.style.transform='none';}ghost.style.width='62px';ghost.style.height='112px';}
  function clearDrag(){if(ghost)ghost.remove();ghost=null;document.querySelectorAll('.drop-hot').forEach(x=>x.classList.remove('drop-hot'));if(active?.el)active.el.classList.remove('dragging');active=null}
+ function getHandPosition(x,y){const under=document.elementFromPoint(x,y),zone=under?.closest('#hand');if(!zone)return null;const target=under.closest('#hand .card');if(!target)return mine.length;const rect=target.getBoundingClientRect();let idx=mine.indexOf(target.dataset.id);if(idx<0)return mine.length;return idx+(x>rect.left+rect.width/2?1:0)}
  hand.querySelectorAll('.card').forEach(el=>{
   el.addEventListener('pointerdown',e=>{if(e.button!==undefined&&e.button!==0)return;active={kind:'hand',id:el.dataset.id,el,start:point(e)};moved=false;el.setPointerCapture?.(e.pointerId)});
  });
  document.querySelectorAll('[data-pile]').forEach(el=>{
-  el.addEventListener('pointerdown',e=>{if(e.button!==undefined&&e.button!==0)return;const kind=el.dataset.pile;if((kind==='deck'||kind==='discard')&&!draggableNow(kind))return;active={kind,id:el.dataset.id||kind,el,start:point(e)};moved=false;el.setPointerCapture?.(e.pointerId)});
+  el.addEventListener('pointerdown',e=>{if(e.button!==undefined&&e.button!==0)return;const kind=el.dataset.pile;if((kind==='deck'||kind==='discard')&&!draggableNow(kind))return;active={kind,id:el.dataset.id||kind,el,start:point(e),drawPromise:null,drawnId:null};moved=false;el.setPointerCapture?.(e.pointerId)});
  });
  function draggableNow(kind){return !!(S&&S.status==='playing'&&S.turn===S.me&&S.phase==='draw'&&(kind==='deck'||(kind==='discard'&&S.top)))}
+ async function pullCard(){if(!active||active.kind!=='deck'||active.drawPromise)return;const before=new Set(mine);active.drawPromise=(async()=>{await act('draw');const id=pendingCard||mine.find(c=>!before.has(c));if(id){active.drawnId=id;revealGhost(id)}})();await active.drawPromise}
  document.addEventListener('pointermove',e=>{
   if(!active)return;const p=point(e),dist=Math.hypot(p.x-active.start.x,p.y-active.start.y);
-  if(dist>8&&!moved){moved=true;active.el.classList.add('dragging');makeGhost(active.el,p.x,p.y)}
+  if(dist>7&&!moved){moved=true;active.el.classList.add('dragging');makeGhost(active.el,p.x,p.y);if(active.kind==='deck')pullCard()}
   if(moved){e.preventDefault();moveGhost(p.x,p.y);document.querySelectorAll('.drop-hot').forEach(x=>x.classList.remove('drop-hot'));const under=document.elementFromPoint(p.x,p.y);const zone=under?.closest('[data-drop]');if(zone)zone.classList.add('drop-hot')}
  },{passive:false});
  document.addEventListener('pointerup',async e=>{
-  if(!active)return;const a=active,p=point(e);if(moved){window.__dragMoved=true;setTimeout(()=>window.__dragMoved=false,350);const under=document.elementFromPoint(p.x,p.y),zone=under?.closest('[data-drop]')?.dataset.drop;
-   if(a.kind==='deck'&&zone==='hand'){
-    const target=under?.closest('#hand .card'),targetId=target?.dataset.id;const insertAfter=target?((p.x-target.getBoundingClientRect().left)>target.getBoundingClientRect().width/2):true;
-    await act('draw');
-    if(pendingCard){const drawn=pendingCard;const from=mine.indexOf(drawn);if(from>=0){mine.splice(from,1);let to=targetId?mine.indexOf(targetId):-1;if(to<0)to=mine.length;else if(insertAfter)to++;mine.splice(to,0,drawn);render();}}
+  if(!active)return;const a=active,p=point(e);if(moved){window.__dragMoved=true;setTimeout(()=>window.__dragMoved=false,350);
+   if(a.kind==='deck'){
+    if(a.drawPromise)await a.drawPromise;
+    const at=getHandPosition(p.x,p.y),id=a.drawnId||pendingCard;
+    if(id&&at!==null){const from=mine.indexOf(id);if(from>=0)mine.splice(from,1);const to=Math.max(0,Math.min(at,mine.length));mine.splice(to,0,id);pendingCard=null;render()}
+   }else{
+    const under=document.elementFromPoint(p.x,p.y),zone=under?.closest('[data-drop]')?.dataset.drop;
+    if(a.kind==='discard'&&zone==='hand')await act('take');
+    else if(a.kind==='hand'&&zone==='discard'&&S.phase==='discard')await act('discard',{card:a.id});
+    else if(a.kind==='hand'&&under?.closest('#hand .card')){const target=under.closest('#hand .card').dataset.id,targetEl=under.closest('#hand .card'),rect=targetEl.getBoundingClientRect(),after=p.x>rect.left+rect.width/2,from=mine.indexOf(a.id);let to=mine.indexOf(target);if(from>=0&&to>=0&&from!==to){const [c]=mine.splice(from,1);if(from<to)to--;mine.splice(to+(after?1:0),0,c);if(a.id===pendingCard)pendingCard=null;render()}}
    }
-   else if(a.kind==='discard'&&zone==='hand')await act('take');
-   else if(a.kind==='hand'&&zone==='discard'&&S.phase==='discard')await act('discard',{card:a.id});
-   else if(a.kind==='hand'&&under?.closest('#hand .card')){const target=under.closest('#hand .card').dataset.id,targetEl=under.closest('#hand .card'),rect=targetEl.getBoundingClientRect(),after=p.x>rect.left+rect.width/2,from=mine.indexOf(a.id);let to=mine.indexOf(target);if(from>=0&&to>=0&&from!==to){const [c]=mine.splice(from,1);if(from<to)to--;mine.splice(to+(after?1:0),0,c);if(a.id===pendingCard)pendingCard=null;render()}}
   }
   clearDrag();
  },{passive:true});
