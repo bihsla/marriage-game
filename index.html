@@ -16,7 +16,7 @@ button:disabled{opacity:.35;pointer-events:none}button.alt{background:#ffffff26;
 .mid{display:flex;justify-content:center;align-items:flex-end;gap:26px;margin:14px 0;flex-wrap:wrap}.mid>div{text-align:center;font-size:12px}
 .card{position:relative;width:58px;height:84px;background:#fff;color:#111;border-radius:9px;display:inline-grid;place-items:center;font-weight:800;cursor:pointer;user-select:none;touch-action:pan-y;box-shadow:0 3px 6px #0007;transition:transform .13s,box-shadow .13s;vertical-align:bottom}
 .card b{position:absolute;top:4px;left:6px;font-size:15px}.card i{font-style:normal;font-size:32px}.card.r{color:#c3182c}.card.w{background:#fff8dc}.card.w:after{content:'★';position:absolute;right:4px;bottom:2px;font-size:12px;color:#d9a300}
-.card.t{box-shadow:0 0 0 3px var(--gold),0 3px 8px #000a}.card.sel{transform:translateY(-13px);box-shadow:0 0 0 3px #3df,0 8px 12px #0008}
+.card.t{box-shadow:0 0 0 3px var(--gold),0 3px 8px #000a}.card.just-drawn{outline:3px solid #55e8ff;box-shadow:0 0 0 5px #55e8ff66,0 8px 18px #000b;transform:translateY(-9px);animation:drawGlow 1.2s ease-in-out infinite alternate}@keyframes drawGlow{from{filter:brightness(1)}to{filter:brightness(1.22)}}.card.sel{transform:translateY(-13px);box-shadow:0 0 0 3px #3df,0 8px 12px #0008}
 .card.back{background:repeating-linear-gradient(45deg,#7b1e3a,#7b1e3a 6px,#a02c50 6px,#a02c50 12px);border:3px solid #fff}.card.back i{color:#fff9;font-size:26px}
 .pile{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:70px;padding:7px;border:2px dashed transparent;border-radius:14px;transition:.15s}.pile.drop-hot{border-color:var(--gold);background:#fff2}.card.dragging{opacity:.25}.drag-ghost{position:fixed;z-index:20;pointer-events:none;transform:translate(-50%,-60%) rotate(7deg) scale(1.08);filter:drop-shadow(0 12px 12px #0009);opacity:.96}.hand.drop-hot{background:#ffffff12;border-radius:14px}
 .hand{display:flex;overflow-x:auto;overflow-y:hidden;padding:22px 14px 12px;min-height:120px;justify-content:flex-start;scrollbar-width:thin;gap:0}
@@ -30,7 +30,7 @@ table{width:100%;border-collapse:collapse;margin:10px 0}td,th{padding:6px;border
 </style></head><body><div id="app"></div><div id="toast"></div>
 <script>
 const $=s=>document.querySelector(s),app=$('#app'),SYM={S:'♠',H:'♥',D:'♦',C:'♣'},RK=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-let T=localStorage.t||'',C=localStorage.c||'',S=null,mine=[],groups=[],sel=new Set(),chatDraft='';
+let T=localStorage.t||'',C=localStorage.c||'',S=null,mine=[],groups=[],sel=new Set(),chatDraft='',pendingCard=null,handInitialized=false;
 const val=id=>String(id||'').replace(/#\d+$/,'');
 const rk=c=>RK.indexOf(val(c).slice(0,-1)),su=c=>val(c).slice(-1),red=s=>s==='H'||s==='D';
 function toast(m){const t=$('#toast');t.textContent=m;t.className='show';clearTimeout(toast.h);toast.h=setTimeout(()=>t.className='',2800)}
@@ -39,8 +39,8 @@ function cls(c){if(val(c)==='JK')return'J';const t=S&&(S.tiplu||(S.result&&S.res
 function cardEl(id,extra='',attrs=''){const c=val(id),k=cls(id),jk=c==='JK';return `<div class="card ${!jk&&red(su(id))?'r':''} ${k?'w':''} ${k==='T'?'t':''} ${extra}" data-id="${id}" ${attrs}><b>${jk?'':c.slice(0,-1)}</b><i>${jk?'🃏':SYM[su(id)]}</i></div>`}
 const back=(x='',oc='')=>`<div class="card back ${x}" ${oc}><i>♦</i></div>`;
 function free(){const used=new Set(groups.flat());return mine.filter(c=>!used.has(c))}
-function sync(h){const pool=[...h],keep=[];for(const c of mine){const i=pool.indexOf(c);if(i>=0){keep.push(c);pool.splice(i,1)}}mine=keep.concat(pool);groups=groups.map(g=>g.filter(c=>h.includes(c))).filter(g=>g.length);sel.clear()}
-function sortHand(){mine.sort((a,b)=>a==='JK'?1:b==='JK'?-1:(su(a)>su(b)?1:su(a)<su(b)?-1:rk(a)-rk(b)));render()}
+function sync(h){const previous=new Set(mine),pool=[...h],keep=[];for(const c of mine){const i=pool.indexOf(c);if(i>=0){keep.push(c);pool.splice(i,1)}}if(handInitialized&&pool.length&&S?.phase==='discard'&&S?.turn===S?.me&&!pendingCard)pendingCard=pool[0];mine=keep.concat(pool);handInitialized=true;groups=groups.map(g=>g.filter(c=>h.includes(c))).filter(g=>g.length);sel.clear()}
+function sortHand(){mine.sort((a,b)=>a==='JK'?1:b==='JK'?-1:(su(a)>su(b)?1:su(a)<su(b)?-1:rk(a)-rk(b)));pendingCard=null;render()}
 function render(){
  if(!C||!S){const params=new URLSearchParams(location.search);const invite=params.get('room')||'';app.innerHTML=`<h1>♥ MARRIAGE ♠</h1><div class="box"><div>Play Nepali Marriage with your friends</div><input id="nm" placeholder="Your name" maxlength="14" value="${esc(localStorage.n||'')}"><button onclick="mk()">Create private room</button><hr style="opacity:.2"><input id="cd" placeholder="ROOM CODE" maxlength="5" style="text-transform:uppercase" value="${esc(invite)}"><button class="alt" onclick="jn()">Join room</button></div>`;return}
  if(S.status==='lobby'){app.innerHTML=`<h1>♥ MARRIAGE ♠</h1><div class="box">Share this room code or invitation link<div class="code">${S.code}</div><button class="alt" onclick="copyInvite()">Copy invite link</button><div class="seats">${S.players.map((p,i)=>`<div class="seat"><div class="av">${esc(p.name[0]||'?')}</div><div>${esc(p.name)}<br><small>${i===0?'Host':(p.ready?'Ready':'Not ready')} · ${p.online?'Online':'Offline'}</small></div></div>`).join('')}</div><p>${S.players.length}/5 players</p>${S.me===0?'<button onclick="act(\'start\')">Start game</button>':'<button onclick="setReady()">'+(S.players[S.me].ready?'Cancel ready':'I’m ready')+'</button>'}<p class="muted">At least 2 players. Everyone must be ready before the host starts.</p><button class="alt" onclick="leaveRoom()">Leave room</button></div>`;return}
@@ -48,10 +48,10 @@ function render(){
  const msg=!pl?'':mt?(dr?'Your turn — draw from the deck or take the top discard':'Select 1 card to discard (or Declare)'):`Waiting for ${S.players[S.turn].name}…`;
  app.innerHTML=`<div class="felt"><div class="seats">${S.players.map((p,i)=>`<div class="seat ${i===S.turn&&pl?'turn':''} ${i===me?'me':''}"><div class="av">${esc(p.name[0]||'?')}</div><div>${esc(p.name)}${p.seen?' 👁':''}<br><small>${p.count} cards · ${p.score} pts · ${p.online?'Online':'Offline'}</small></div></div>`).join('')}</div>
  <div class="mid"><div class="pile" data-drop="deck">Deck ${S.deck}<br>${back(dr?'pulse':'',dr?"data-pile=\"deck\" onclick=\"act('draw')\"":'data-pile=\"deck\"')}</div><div class="pile" data-drop="discard">Discard<br>${S.top?cardEl(S.top,dr?'pulse':'',dr?"data-pile=\"discard\" onclick=\"act('take')\"":'data-pile=\"discard\"'):''}</div><div>Round ${S.round}<br>Tiplu<br>${S.tiplu?cardEl(S.tiplu,'t'):back()}</div></div>
- <div id="msg">${msg}</div><div class="groups">${groups.map((g,gi)=>`<div class="grp" onclick="breakGroup(${gi})">${g.map(c=>cardEl(c)).join('')}</div>`).join('')}</div>
- <div class="hand" id="hand" data-drop="hand">${fr.map((c,i)=>cardEl(c,(sel.has(c)?'sel':''),`data-hand-index="${i}" draggable="false" onclick="tg('${c}')"`)).join('')}</div>
+ <div id="msg">${pendingCard?'✨ New card revealed! Drag the glowing card to the position you want in your hand.':msg}</div><div class="groups">${groups.map((g,gi)=>`<div class="grp" onclick="breakGroup(${gi})">${g.map(c=>cardEl(c)).join('')}</div>`).join('')}</div>
+ <div class="hand" id="hand" data-drop="hand">${fr.map((c,i)=>cardEl(c,[(sel.has(c)?'sel':''),(c===pendingCard?'just-drawn':'')].join(' '),`data-hand-index="${i}" draggable="false" onclick="tg('${c}')"`)).join('')}</div>
  <div class="row"><button class="alt" onclick="sortHand()">Sort</button><button class="alt" onclick="grp()">Group selected</button>${seen?'':`<button ${pl&&mt&&ds?'':'disabled'} onclick="showM()">👁 See maal</button>`}<button ${ds?'':'disabled'} onclick="dis()">Discard</button><button ${ds&&seen?'':'disabled'} onclick="dec()">Declare ✔</button></div>
- <div class="muted" style="text-align:center;margin-top:6px">Drag deck → hand to draw · Drag hand → discard to throw · Drag cards to reorder · Tap to select</div></div>
+ <div class="muted" style="text-align:center;margin-top:6px">Drag deck → hand to draw · Then drag the glowing face-up card to choose its exact position · Drag hand → discard to throw</div></div>
  <div class="chat"><b>Room chat</b><div class="chatlog">${(S.chat||[]).map(m=>`<div class="chatline"><b>${esc(m.name)}:</b> ${esc(m.message)}</div>`).join('')}</div><div class="chatform"><input id="chatmsg" maxlength="180" placeholder="Message friends…" onkeydown="if(event.key==='Enter')sendChat()"><button onclick="sendChat()">Send</button></div></div>
  <div class="row"><button class="alt" onclick="copyInvite()">Copy invite</button><button class="alt" onclick="leaveRoom()">Leave room</button></div>`;
  setupDrag();
@@ -69,7 +69,7 @@ async function mk(){localStorage.n=$('#nm').value;const j=await api('create',{na
 async function jn(){localStorage.n=$('#nm').value;const j=await api('join',{name:$('#nm').value,code:$('#cd').value});if(j.token)save(j)}
 function save(j){T=localStorage.t=j.token;C=localStorage.c=j.code;S=null;history.replaceState({},'',location.pathname+'?room='+C);poll(true)}
 async function setReady(){await api('ready',{ready:!S.players[S.me].ready});poll(true)}
-async function leaveRoom(){if(!confirm('Leave this room?'))return;await api('leave');localStorage.removeItem('t');localStorage.removeItem('c');T=C='';S=null;mine=[];groups=[];history.replaceState({},'',location.pathname);render()}
+async function leaveRoom(){if(!confirm('Leave this room?'))return;await api('leave');localStorage.removeItem('t');localStorage.removeItem('c');T=C='';S=null;mine=[];groups=[];pendingCard=null;handInitialized=false;history.replaceState({},'',location.pathname);render()}
 function copyInvite(){const u=location.origin+location.pathname+'?room='+C;navigator.clipboard?.writeText(u).then(()=>toast('Invite link copied')).catch(()=>toast(u));}
 async function sendChat(){const el=$('#chatmsg');if(!el||!el.value.trim())return;const message=el.value.trim();el.value='';await api('chat',{message});poll(true)}
 let polling=false;
@@ -98,7 +98,7 @@ function setupDrag(){
    if(a.kind==='deck'&&zone==='hand')await act('draw');
    else if(a.kind==='discard'&&zone==='hand')await act('take');
    else if(a.kind==='hand'&&zone==='discard'&&S.phase==='discard')await act('discard',{card:a.id});
-   else if(a.kind==='hand'&&under?.closest('#hand .card')){const target=under.closest('#hand .card').dataset.id,from=mine.indexOf(a.id),to=mine.indexOf(target);if(from>=0&&to>=0&&from!==to){const [c]=mine.splice(from,1);mine.splice(to,0,c);render()}}
+   else if(a.kind==='hand'&&under?.closest('#hand .card')){const target=under.closest('#hand .card').dataset.id,from=mine.indexOf(a.id),to=mine.indexOf(target);if(from>=0&&to>=0&&from!==to){const [c]=mine.splice(from,1);mine.splice(to,0,c);if(a.id===pendingCard)pendingCard=null;render()}}
   }
   clearDrag();
  },{passive:true});
