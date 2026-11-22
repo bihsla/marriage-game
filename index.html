@@ -87,9 +87,9 @@ async function mk(){const j=await api('create',{name:$('#nm').value});if(j.token
 async function jn(){const j=await api('join',{name:$('#nm').value,code:$('#cd').value});if(j.token)save(j)}
 function save(j){T=localStorage.t=j.token;C=localStorage.c=j.code;poll()}
 async function poll(){
-  if(!C)return render();
-  const s=await api('state',{},true);
-  if(s.error){if(/not found|Not in/.test(s.error)){localStorage.clear();T=C='';S=null}return render()}
+ if(!C)return;
+const s=await api('state',{},true);
+if(s.error){if(/not found|Not in/.test(s.error)){localStorage.clear();T=C='';S=null;render()}return}
   const old=JSON.stringify(S);S=s;sync(s.hand);
   if(JSON.stringify(S)!==old)render();
 }
